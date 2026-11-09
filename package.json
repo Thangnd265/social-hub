@@ -1,0 +1,17 @@
+{
+  "name": "social-hub",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Social Hub Desktop App (Zalo, Messenger, Telegram, Facebook, Instagram, Threads, X)",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "smoke": "electron . --smoke-test",
+    "build:exe": "node scripts/build-exe.js"
+  },
+  "devDependencies": {
+    "electron": "^34.0.0"
+  },
+  "build": 1794189896287
+}

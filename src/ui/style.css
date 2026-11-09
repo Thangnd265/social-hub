@@ -1,0 +1,876 @@
+:root {
+  --zalo-rail-bg: #17191c;
+  --zalo-titlebar-bg: #17191c;
+  --zalo-surface: #22262b;
+  --zalo-surface-elevated: #282c32;
+  --zalo-tile-active: #2b2f36;
+  --zalo-tile-hover: #23272e;
+  --zalo-border: #2a2e35;
+  --zalo-text: #f1f3f5;
+  --zalo-text-muted: #b1b5b9;
+  --zalo-icon: #b1b5b9;
+  --zalo-icon-active: #ffffff;
+  --zalo-badge-red: #ef2b2d;
+  --zalo-blue: #0068ff;
+  --zalo-blue-hover: #0057d6;
+  --rail-width: 64px;
+  --titlebar-height: 32px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+::selection {
+  background: rgba(0, 104, 255, 0.35);
+  color: #ffffff;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--zalo-rail-bg);
+  color: var(--zalo-text);
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Frameless Titlebar (Exact match to Image 1 top bar) */
+#titlebar {
+  height: var(--titlebar-height);
+  width: 100%;
+  background: var(--zalo-titlebar-bg);
+  border-bottom: 1px solid var(--zalo-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 14px;
+}
+
+.titlebar-drag {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  -webkit-app-region: drag;
+  overflow: hidden;
+}
+
+#titlebar-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: #d6d9dc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.titlebar-sub {
+  font-size: 11px;
+  color: #7c828a;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.titlebar-actions {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-btn {
+  width: 44px;
+  height: 100%;
+  border: none;
+  background: transparent;
+  color: var(--zalo-icon);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 120ms ease-out, color 120ms ease-out;
+}
+
+.titlebar-btn:hover {
+  background: var(--zalo-tile-hover);
+  color: #ffffff;
+}
+
+.titlebar-btn-close:hover {
+  background: #e81123;
+  color: #ffffff;
+}
+
+/* Main Workspace Layout */
+#workspace {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - var(--titlebar-height));
+  background: #181b20;
+}
+
+/* Left Vertical Navigation Rail (Exact match to Image 2: 64px width, #17191c) */
+#zalo-rail {
+  width: var(--rail-width);
+  min-width: var(--rail-width);
+  height: 100%;
+  background: #17191c;
+  border-right: 1px solid var(--zalo-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0 12px;
+  z-index: 20;
+}
+
+/* Top Group: App Switcher Buttons (48x48px rounded-xl #2b2f36 when active) */
+.rail-group-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  flex: 1;
+}
+
+.rail-group-top::-webkit-scrollbar {
+  display: none;
+}
+
+.rail-app-btn {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  min-height: 48px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: var(--zalo-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 140ms ease-out, color 140ms ease-out, transform 120ms ease-out;
+}
+
+.rail-app-btn:hover {
+  background: var(--zalo-tile-hover);
+  color: #e5e7eb;
+}
+
+.rail-app-btn.active {
+  background: #2b2f36;
+  color: var(--zalo-icon-active);
+}
+
+.rail-app-btn.split-secondary {
+  background: rgba(43, 47, 54, 0.65);
+  outline: 1px dashed #4b5563;
+  color: #e5e7eb;
+}
+
+.rail-app-btn.dragging {
+  opacity: 0.4;
+  transform: scale(0.92);
+  cursor: grabbing;
+}
+
+.rail-app-btn.drag-over {
+  outline: 2px solid var(--zalo-blue);
+  outline-offset: 1px;
+  background: rgba(0, 104, 255, 0.16);
+}
+
+.rail-app-btn svg {
+  width: 24px;
+  height: 24px;
+  pointer-events: none;
+}
+
+/* Red Unread Notification Pill Badge (Exact match to Image 2) */
+.unread-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #ef2b2d;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 15px;
+  font-variant-numeric: tabular-nums;
+  border: 2px solid #17191c;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+}
+
+.unread-badge[hidden] {
+  display: none !important;
+}
+
+/* Bottom Group: Utility Icons (Exact match to Image 2 bottom stack) */
+.rail-group-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+  padding-top: 8px;
+}
+
+.rail-util-btn {
+  width: 48px;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: var(--zalo-icon);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 140ms ease-out, color 140ms ease-out;
+}
+
+.rail-util-btn:hover {
+  background: var(--zalo-tile-hover);
+  color: #ffffff;
+}
+
+.rail-util-btn.active-toggle {
+  background: #2b2f36;
+  color: #ffffff;
+}
+
+/* Main Webview Stage */
+#webview-stage {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  position: relative;
+  background: #181b20;
+  overflow: hidden;
+}
+
+.webview-pane {
+  display: none;
+  flex: 1;
+  height: 100%;
+  position: relative;
+  border: none;
+  background: #181b20;
+  contain: strict;
+}
+
+.webview-pane.active,
+.webview-pane.split-secondary {
+  display: flex;
+  flex-direction: column;
+}
+
+.webview-pane.split-secondary {
+  border-left: 1px solid var(--zalo-border);
+}
+
+.webview-pane webview {
+  display: inline-flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Google Browser Navigation Toolbar (Back, Forward, Home, Omnibox Address Bar) */
+.browser-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0 10px;
+  background: #17191c;
+  border-bottom: 1px solid var(--zalo-border);
+  flex-shrink: 0;
+}
+
+.browser-nav-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #d1d5db;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 120ms ease-out, color 120ms ease-out, opacity 120ms ease-out;
+}
+
+.browser-nav-btn:hover:not(:disabled) {
+  background: #2b2f36;
+  color: #ffffff;
+}
+
+.browser-nav-btn:disabled {
+  opacity: 0.32;
+  cursor: default;
+}
+
+.browser-omnibox-form {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 6px;
+  min-width: 0;
+}
+
+.browser-url-input {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 0 11px;
+  border-radius: 7px;
+  border: 1px solid #2e333d;
+  background: #202328;
+  color: #f3f4f6;
+  font-size: 12.5px;
+  outline: none;
+  transition: border-color 120ms ease-out, background-color 120ms ease-out;
+}
+
+.browser-url-input:focus {
+  border-color: var(--zalo-blue);
+  background: #141619;
+}
+
+.browser-url-go {
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 7px;
+  border: none;
+  background: var(--zalo-blue);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: filter 120ms ease-out;
+}
+
+.browser-url-go:hover {
+  filter: brightness(1.1);
+}
+
+/* Modals (Add App & Settings) */
+.modal-backdrop {
+  position: fixed;
+  inset: var(--titlebar-height) 0 0 0;
+  background: rgba(10, 12, 15, 0.72);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-backdrop[hidden] {
+  display: none !important;
+}
+
+.modal-dialog {
+  width: 500px;
+  max-width: 92vw;
+  max-height: 85vh;
+  background: var(--zalo-surface);
+  border: 1px solid var(--zalo-border);
+  border-radius: 12px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-dialog.settings-modal-dialog {
+  width: 660px;
+  max-width: 94vw;
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #383d47;
+  border-radius: 999px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--zalo-border);
+}
+
+.modal-header h2 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.modal-close-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--zalo-text-muted);
+  cursor: pointer;
+}
+
+.modal-close-btn:hover {
+  background: var(--zalo-tile-active);
+  color: #ffffff;
+}
+
+.modal-body {
+  padding: 18px 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-desc {
+  color: var(--zalo-text-muted);
+  line-height: 1.45;
+}
+
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.preset-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--zalo-border);
+  background: var(--zalo-surface-elevated);
+  color: var(--zalo-text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 120ms ease-out, background-color 120ms ease-out;
+}
+
+.preset-btn:hover {
+  border-color: var(--zalo-blue);
+  background: #2f343c;
+}
+
+.preset-btn svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.service-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--zalo-border);
+  padding-top: 14px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--zalo-text-muted);
+}
+
+.form-row input,
+.profile-row input {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid #383d47;
+  background: #17191c;
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+  user-select: text;
+}
+
+.form-row input:focus,
+.profile-row input:focus {
+  border-color: var(--zalo-blue);
+}
+
+.form-error {
+  color: #f87171;
+  font-size: 12px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-danger {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--zalo-blue);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: var(--zalo-blue-hover);
+}
+
+.btn-secondary {
+  background: #323740;
+  color: #e5e7eb;
+}
+
+.btn-secondary:hover {
+  background: #3d434e;
+}
+
+.btn-danger {
+  background: rgba(239, 43, 45, 0.16);
+  color: #f87171;
+}
+
+.btn-danger:hover {
+  background: #ef2b2d;
+  color: #ffffff;
+}
+
+/* Settings Grid Tiles ("dạng các ô" + Toggle Switch + Notification Mode) */
+.settings-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.btn-sm {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 12px;
+}
+
+.notify-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.notify-mode-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.notify-mode-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: #17191c;
+  border: 1px solid var(--zalo-border);
+  cursor: pointer;
+  transition: border-color 140ms ease-out, background-color 140ms ease-out;
+}
+
+.notify-mode-option:hover {
+  border-color: #383d47;
+}
+
+.notify-mode-option:has(input:checked) {
+  border-color: var(--zalo-blue);
+  background: rgba(0, 104, 255, 0.1);
+}
+
+.notify-mode-option input[type="radio"],
+.notify-mode-option input[type="checkbox"] {
+  margin: 0;
+  accent-color: var(--zalo-blue);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.notify-mode-title {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-section h3 {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--zalo-text-muted);
+}
+
+.settings-service-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 620px) {
+  .settings-service-grid,
+  .notify-mode-grid--3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.settings-service-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 9px;
+  padding: 10px 12px;
+  border-radius: 9px;
+  background: #17191c;
+  border: 1px solid var(--zalo-border);
+  transition: border-color 140ms ease-out, opacity 140ms ease-out, background-color 140ms ease-out;
+}
+
+.settings-service-card:hover {
+  border-color: #383d47;
+}
+
+.settings-service-card.is-disabled {
+  opacity: 0.62;
+  background: #141619;
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.card-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: #23272e;
+  color: #f1f3f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-icon-box svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.card-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.settings-service-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-status-badge {
+  font-size: 11px;
+  color: #60a5fa;
+}
+
+.settings-service-card.is-disabled .card-status-badge {
+  color: #7c828a;
+}
+
+.service-toggle-switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  border-radius: 999px;
+  border: none;
+  background: #383d47;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background-color 150ms ease-out;
+}
+
+.service-toggle-switch.is-on {
+  background: var(--zalo-blue);
+}
+
+.service-toggle-switch .toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.service-toggle-switch.is-on .toggle-thumb {
+  transform: translateX(18px);
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.btn-card-action {
+  flex: 1;
+  height: 26px;
+  padding: 0 8px;
+  border-radius: 6px;
+  border: none;
+  font-size: 11.5px;
+  font-weight: 500;
+  cursor: pointer;
+  background: #262a31;
+  color: #cbd5e1;
+  transition: background-color 120ms ease-out, color 120ms ease-out;
+}
+
+.btn-card-action:hover {
+  background: #323740;
+  color: #ffffff;
+}
+
+.btn-card-danger {
+  flex: 0 0 auto;
+  padding: 0 9px;
+  background: rgba(239, 43, 45, 0.14);
+  color: #f87171;
+}
+
+.btn-card-danger:hover {
+  background: #ef2b2d;
+  color: #ffffff;
+}
+
+/* Privacy Lock Overlay */
+.lock-overlay {
+  position: fixed;
+  inset: var(--titlebar-height) 0 0 0;
+  background: #17191c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.lock-overlay[hidden] {
+  display: none !important;
+}
+
+.lock-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  max-width: 340px;
+}
+
+.lock-icon-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #2b2f36;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lock-box h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.lock-box p {
+  color: var(--zalo-text-muted);
+  line-height: 1.5;
+}
